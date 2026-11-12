@@ -6,6 +6,7 @@
 <meta name="description" content="Menu de Ghalia House, Testour : plats traditionnels, boissons et loisirs.">
 <meta name="theme-color" content="#1E4B34">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<script>window.GHALIA_API_BASE = "";</script>
 </head>
 <body>
 <title>Menu Ghalia House</title>
@@ -176,6 +177,29 @@ h2.ar{font-family:var(--f-ar-display);letter-spacing:0;font-size:24px}
 .entry-list{font-size:12.5px;color:var(--muted);font-weight:600}
 .entry-txt [dir="rtl"]{font-family:var(--f-ar-body);font-size:14.5px}
 
+/* TABLE + PERSONNEL */
+.table-badge{display:inline-flex;align-items:center;gap:10px;margin-top:24px;padding:6px 16px 6px 6px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22)}
+.table-badge b{display:grid;place-items:center;min-width:44px;height:44px;padding:0 8px;border-radius:999px;background:#E9BD5E;color:#1E2A20;font-family:var(--f-display);font-size:22px;font-variant-numeric:tabular-nums}
+.table-badge span{display:flex;flex-direction:column;line-height:1.2;font-weight:700;font-size:15px}
+.table-badge small{font-family:var(--f-ar-body);font-size:14px;opacity:.85}
+.staffbar{background:var(--ink);color:var(--bg);font-size:13.5px}
+.staffbar .in{max-width:640px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.staffbar .who{flex:1 1 100%;min-width:0;font-weight:700}
+.staffbar .who small{display:block;font-weight:500;opacity:.7}
+.sb-btn{border:1px solid color-mix(in srgb,var(--bg) 35%,transparent);background:transparent;color:var(--bg);border-radius:10px;padding:7px 10px;font-weight:700;font-size:13px}
+.sb-btn.hl{background:#E9BD5E;border-color:#E9BD5E;color:#1E2A20}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:12.5px;padding:6px}
+.field{display:flex;flex-direction:column;gap:6px;margin-top:14px;font-size:13.5px;font-weight:700}
+.field input,.field textarea{font:inherit;font-weight:500;font-size:16px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.field textarea{min-height:70px;resize:vertical}
+.err{color:var(--pom);font-size:13.5px;font-weight:600;margin:10px 0 0}
+.primary:disabled{opacity:.6}
+.ord{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px}
+.ord-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.st{font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.st-nouveau{background:var(--wheat-soft);color:var(--wheat)} .st-preparation{background:var(--pine-soft);color:var(--pine)}
+.st-pret{background:var(--pine);color:var(--bg)} .st-servi{background:var(--surface-2);color:var(--muted)} .st-annule{background:var(--pom-soft);color:var(--pom)}
+
 /* INFO */
 .info{margin-top:34px;margin-bottom:120px;display:grid;gap:12px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px}
@@ -222,6 +246,7 @@ h2.ar{font-family:var(--f-ar-display);letter-spacing:0;font-size:24px}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 
+<div class="staffbar" id="staffBar" hidden></div>
 <header class="hero">
   <div class="wrap">
     <div class="topbar">
@@ -238,6 +263,7 @@ h2.ar{font-family:var(--f-ar-display);letter-spacing:0;font-size:24px}
         </button>
       </div>
     </div>
+    <div class="table-badge" id="tableBadge" hidden></div>
     <h1><span data-i="h1">Bienvenue à la maison</span><span class="ar" data-i="h1b">دار غالية</span></h1>
     <p data-i="intro">Café, restaurant et espace enfants en pleine nature. Cuisine tunisienne traditionnelle, faite maison.</p>
     <div class="facts">
@@ -298,6 +324,7 @@ h2.ar{font-family:var(--f-ar-display);letter-spacing:0;font-size:24px}
     </div>
     <p class="credits">Photos des boissons : Jubair1985 (CC0), Drew Coffman (CC0), Evan Swigart (CC BY 2.0), Jimpaz (CC BY-SA 3.0), pic_p_ter (domaine public), Kykywinks (CC BY-SA 4.0), via Wikimedia Commons.</p>
     <p class="foot" data-i="foot">Allergies ou demande particulière ? Parlez-en à notre équipe.</p>
+    <p class="foot"><button type="button" class="linkbtn" id="staffLink">Espace personnel</button></p>
   </section>
 </main>
 
@@ -549,7 +576,7 @@ function openCart(){
       <div class="qty"><button type="button" data-dec="${k}" aria-label="moins">−</button><output>${cart[k]}</output><button type="button" data-inc="${k}" aria-label="plus">+</button></div>
       <b class="price">${money(it.p*cart[k])}</b></div>`}).join("")}</div>
       <div class="total"><span>${T().total}</span><span>${money(tot)}</span></div>
-      <div class="note">${svg("star",18)}<span>${T().selNote}</span></div>
+      <div class="note">${svg("star",18)}<span>${TABLE?`<b>${lang==="ar"?"الطاولة":"Table"} ${TABLE}</b> · `:""}${T().selNote}</span></div>
       <div class="sh-actions"><button type="button" class="ghost" id="clr" style="padding:12px 14px">${T().clear}</button><button type="button" class="primary" id="cls">OK</button></div>`
     :`<p class="empty">${T().emptySel}</p>`}`);
   $("#sheetIn").onclick=e=>{
@@ -592,6 +619,141 @@ document.querySelector(".hero").style.backgroundImage = 'linear-gradient(180deg,
 $("#grail").innerHTML = GALLERY.map(g=>`<figure class="gph"><img src="${PHOTO[g.k]}" alt="${esc(g.fr)}" loading="lazy"><figcaption><span lang="fr">${esc(g.fr)}</span><span lang="ar" dir="rtl">${esc(g.ar)}</span></figcaption></figure>`).join("");
 PHOTO.nouasser = PHOTO.nouasserPoulet;
 applyLang(); render();
+
+/* ====== Numéro de table + espace personnel (serveurs) ====== */
+const MAX_TABLE = 200;
+const API_BASE = (window.GHALIA_API_BASE || "").replace(/\/$/, "");
+const qs = new URLSearchParams(location.search);
+let TABLE = (()=>{ const n = parseInt(qs.get("t") || qs.get("table") || "", 10); return n >= 1 && n <= MAX_TABLE ? n : null; })();
+let staff = store.get("gh_staff", null);
+const isWaiter = () => !!(staff && staff.token);
+const ST = {nouveau:"Envoyée", preparation:"En préparation", pret:"Prête à servir", servi:"Servie", annule:"Annulée"};
+const hhmm = t => new Date(t).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+
+async function apiCall(path, opts = {}){
+  let r;
+  try{
+    r = await fetch(API_BASE + path, {...opts, headers:{"Content-Type":"application/json", ...(staff?.token ? {Authorization:"Bearer " + staff.token} : {})}});
+  }catch(e){ throw new Error("Impossible de joindre le serveur des commandes. Vérifiez le Wi-Fi."); }
+  let data = {}; try{ data = await r.json(); }catch(e){}
+  if(r.status === 401 && staff && path !== "/api/login"){ staff = null; store.set("gh_staff", null); renderStaff(); }
+  if(!r.ok) throw new Error(data.error || "Le serveur des commandes ne répond pas.");
+  return data;
+}
+
+function setTable(n){
+  TABLE = n;
+  try{ const u = new URL(location.href); if(n) u.searchParams.set("t", n); else u.searchParams.delete("t"); u.searchParams.delete("table"); history.replaceState(null, "", u); }catch(e){}
+  renderTable(); renderStaff(); renderBar();
+}
+function renderTable(){
+  const b = $("#tableBadge");
+  b.hidden = !TABLE;
+  if(TABLE) b.innerHTML = `<b>${TABLE}</b><span>Table ${TABLE}<small lang="ar" dir="rtl">الطاولة ${TABLE}</small></span>`;
+  document.title = TABLE ? `Table ${TABLE} · Menu Ghalia House` : "Menu Ghalia House";
+}
+function renderStaff(){
+  const bar = $("#staffBar");
+  bar.hidden = !isWaiter();
+  if(!isWaiter()) return;
+  bar.innerHTML = `<div class="in"><div class="who">Mode serveur · ${esc(staff.user.name)}<small>${TABLE ? "Table " + TABLE : "Aucune table choisie"}</small></div>
+    <button type="button" class="sb-btn hl" id="sbTable">${TABLE ? "Changer de table" : "Choisir la table"}</button>
+    <button type="button" class="sb-btn" id="sbOrders" ${TABLE ? "" : "disabled"}>Suivi</button>
+    <button type="button" class="sb-btn" id="sbOut">Déconnexion</button></div>`;
+  $("#sbTable").onclick = askTable;
+  $("#sbOrders").onclick = openTableOrders;
+  $("#sbOut").onclick = async ()=>{ try{ await apiCall("/api/logout", {method:"POST"}); }catch(e){} staff = null; store.set("gh_staff", null); renderStaff(); renderBar(); toast("Déconnecté"); };
+}
+
+function openLogin(){
+  if(isWaiter()){ toast("Vous êtes déjà connecté"); return; }
+  openSheet(`<h3 style="margin-top:0">Espace personnel</h3>
+    <p class="alt">Réservé aux serveurs et à la cuisine de Ghalia House.</p>
+    <form id="loginForm" autocomplete="on">
+      <label class="field" for="lgU">Identifiant<input id="lgU" name="username" autocomplete="username" autocapitalize="none" required></label>
+      <label class="field" for="lgP">Mot de passe<input id="lgP" name="password" type="password" autocomplete="current-password" required></label>
+      <p class="err" id="lgErr" hidden></p>
+      <div class="sh-actions"><button type="submit" class="primary" id="lgBtn">Se connecter</button></div>
+    </form>`);
+  $("#loginForm").onsubmit = async e=>{
+    e.preventDefault(); const btn = $("#lgBtn"); btn.disabled = true; $("#lgErr").hidden = true;
+    try{
+      const d = await apiCall("/api/login", {method:"POST", body:JSON.stringify({username:$("#lgU").value, password:$("#lgP").value})});
+      if(d.user.role === "reservation"){ location.href = (API_BASE || "") + "/cuisine"; return; }
+      staff = {token:d.token, user:d.user}; store.set("gh_staff", staff);
+      closeSheet(); renderStaff(); renderBar(); toast("Bonjour " + d.user.name);
+      if(!TABLE) askTable();
+    }catch(err){ $("#lgErr").textContent = err.message; $("#lgErr").hidden = false; btn.disabled = false; }
+  };
+}
+
+function askTable(){
+  openSheet(`<h3 style="margin-top:0">Numéro de table</h3>
+    <form id="tblForm"><label class="field" for="tblIn">Table (1 à ${MAX_TABLE})<input id="tblIn" type="number" inputmode="numeric" min="1" max="${MAX_TABLE}" value="${TABLE || ""}" required></label>
+    <div class="sh-actions"><button type="submit" class="primary">Valider</button></div></form>`);
+  setTimeout(()=>$("#tblIn")?.focus(), 300);
+  $("#tblForm").onsubmit = e=>{ e.preventDefault(); const n = parseInt($("#tblIn").value, 10); if(n >= 1 && n <= MAX_TABLE){ setTable(n); closeSheet(); } };
+}
+
+function openOrder(){
+  const keys = Object.keys(cart).filter(k=>cart[k]>0 && byKey(k));
+  const tot = keys.reduce((a,k)=>a+cart[k]*byKey(k).p,0);
+  openSheet(`<h3 style="margin-top:0">Commande · ${TABLE ? "Table " + TABLE : "table à choisir"}</h3>
+    ${keys.length ? `<div>${keys.map(k=>{const it=byKey(k);return `<div class="line"><div><b>${esc(it.fr)}</b><div class="alt" style="font-size:13px" dir="rtl">${esc(it.ar)}</div></div>
+      <div class="qty"><button type="button" data-dec="${k}" aria-label="moins">−</button><output>${cart[k]}</output><button type="button" data-inc="${k}" aria-label="plus">+</button></div>
+      <b class="price">${money(it.p*cart[k])}</b></div>`}).join("")}</div>
+      <div class="total"><span>Total</span><span>${money(tot)}</span></div>
+      ${TABLE ? "" : `<label class="field" for="oTbl">Table (1 à ${MAX_TABLE})<input id="oTbl" type="number" inputmode="numeric" min="1" max="${MAX_TABLE}" required></label>`}
+      <label class="field" for="oNote">Remarque pour la cuisine<textarea id="oNote" maxlength="300" placeholder="Ex. sans piment, bien cuit, servir après les entrées…"></textarea></label>
+      <p class="err" id="oErr" hidden></p>
+      <div class="sh-actions"><button type="button" class="ghost" id="clr" style="padding:12px 14px">Vider</button><button type="button" class="primary" id="oSend">Envoyer en cuisine</button></div>`
+    : `<p class="empty">Ajoutez des plats avec le bouton + pour préparer la commande.</p>`}`);
+  $("#sheetIn").onclick = async e=>{
+    const d=e.target.closest("[data-dec]"), i=e.target.closest("[data-inc]");
+    if(d){ cart[d.dataset.dec]--; if(cart[d.dataset.dec]<=0) delete cart[d.dataset.dec]; render(); openOrder(); return; }
+    if(i){ cart[i.dataset.inc]=Math.min(50,cart[i.dataset.inc]+1); render(); openOrder(); return; }
+    if(e.target.id==="clr"){ cart={}; render(); closeSheet(); return; }
+    if(e.target.id==="oSend"){
+      const btn = e.target; const err = $("#oErr"); err.hidden = true;
+      const t = TABLE || parseInt($("#oTbl")?.value, 10);
+      if(!(t >= 1 && t <= MAX_TABLE)){ err.textContent = `Indiquez un numéro de table entre 1 et ${MAX_TABLE}.`; err.hidden = false; return; }
+      btn.disabled = true; btn.textContent = "Envoi…";
+      try{
+        const items = keys.map(k=>{const it=byKey(k); return {key:k, fr:it.fr, ar:it.ar, qty:cart[k], price:it.p};});
+        await apiCall("/api/orders", {method:"POST", body:JSON.stringify({table:t, items, note:$("#oNote").value})});
+        if(!TABLE) setTable(t);
+        cart = {}; render(); closeSheet(); toast(`Commande envoyée en cuisine · Table ${t}`);
+      }catch(ex){ err.textContent = ex.message; err.hidden = false; btn.disabled = false; btn.textContent = "Envoyer en cuisine"; }
+    }
+  };
+}
+
+async function openTableOrders(){
+  if(!TABLE) return askTable();
+  openSheet(`<h3 style="margin-top:0">Suivi · Table ${TABLE}</h3><p class="alt" id="toLoad">Chargement…</p><div id="toList"></div>`);
+  try{
+    const {orders} = await apiCall(`/api/orders?table=${TABLE}`);
+    $("#toLoad").textContent = orders.length ? "Commandes des dernières 24 heures." : "Aucune commande pour cette table aujourd'hui.";
+    $("#toList").innerHTML = orders.map(o=>`<div class="ord"><div class="ord-h"><b>${hhmm(o.created_at)} · ${esc(o.waiter_name||"")}</b><span class="st st-${o.status}">${ST[o.status]||o.status}</span></div>
+      ${o.items.map(i=>`<div>${i.qty} × ${esc(i.fr)}</div>`).join("")}${o.note?`<div class="alt" style="margin-top:4px">« ${esc(o.note)} »</div>`:""}
+      ${o.status==="pret"?`<div class="sh-actions" style="margin-top:10px"><button type="button" class="primary" data-served="${o.id}">Marquer servie</button></div>`:""}</div>`).join("");
+    $("#sheetIn").onclick = async e=>{ const b=e.target.closest("[data-served]"); if(!b) return; b.disabled=true;
+      try{ await apiCall(`/api/orders/${b.dataset.served}`, {method:"PATCH", body:JSON.stringify({status:"servi"})}); toast("Commande servie"); openTableOrders(); }catch(ex){ toast(ex.message); b.disabled=false; } };
+  }catch(ex){ $("#toLoad").textContent = ex.message; }
+}
+
+const _renderBar = renderBar;
+renderBar = function(){
+  _renderBar();
+  const lbl = $('#openCart [data-i="mySel"]');
+  if(lbl) lbl.textContent = isWaiter() ? (TABLE ? `Commande table ${TABLE}` : "Commande") : T().mySel;
+};
+$("#openCart").onclick = ()=> isWaiter() ? openOrder() : openCart();
+$("#staffLink").onclick = openLogin;
+renderTable(); renderStaff();
+// Vérifie que la session du serveur est toujours valable
+if(isWaiter()) apiCall("/api/me").then(d=>{ staff.user = d.user; store.set("gh_staff", staff); renderStaff(); }).catch(()=>{});
+
 </script>
 
 </body>
